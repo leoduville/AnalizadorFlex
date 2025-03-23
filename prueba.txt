@@ -5,6 +5,7 @@ DEFINE
     <float>:<var_float>
     <integer, integer>:<var2_entera, var3_entera>
 ENDDEFINE
+
 PROGRAM
 var_entera = 1
 while((var_entera) < (100)){
@@ -19,5 +20,5 @@ while((var_entera) < (100)){
 }
 
 resultado = middle(var_entera + 1; 50; []) 
-resultado = middle(var_entera; 50; [1+4, 2+5])
+resultado = middle(var_entera; 50; [middle(var_entera + 1; 50; []) , 2+5])
 END
