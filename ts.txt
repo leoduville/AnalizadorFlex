@@ -1,0 +1,15 @@
+NOMBRE                    | TOKEN           | TIPO       | VALOR                     |LONGITUD
+var_string                | ID              | string     | -                         |-    
+var_entera                | ID              | integer    | -                         |-    
+resultado                 | ID              | integer    | -                         |-    
+var_float                 | ID              | float      | -                         |-    
+var2_entera               | ID              | integer    | -                         |-    
+var3_entera               | ID              | integer    | -                         |-    
+_1                        | CONST_INT       | -          | 1                         |-    
+_100                      | CONST_INT       | -          | 100                       |-    
+_2                        | CONST_INT       | -          | 2                         |-    
+_0                        | CONST_INT       | -          | 0                         |-    
+_NO                       | CONST_STR       | -          | NO                        |2    
+_50                       | CONST_INT       | -          | 50                        |-    
+_4                        | CONST_INT       | -          | 4                         |-    
+_5                        | CONST_INT       | -          | 5                         |-    
