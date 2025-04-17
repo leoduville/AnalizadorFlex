@@ -346,7 +346,8 @@ public class parser extends java_cup.runtime.lr_parser {
 class CUP$parser$actions {
 
  
-
+        public String resultado="";
+        public List<NodoSentencia> a ;
 
   private final parser parser;
 
@@ -569,7 +570,13 @@ class CUP$parser$actions {
           case 18: // programa ::= PROGRAM_BEGIN sentencias PROGRAM_END 
             {
               Object RESULT =null;
-		 reglas.add("[Regla 16] PROGRAM_BEGIN sentencias PROGRAM_END"); 
+		int sleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		 
+        RESULT = new NodoPrograma(s);        
+        reglas.add("[Regla 16] PROGRAM_BEGIN sentencias PROGRAM_END"); 
+        
               CUP$parser$result = parser.getSymbolFactory().newSymbol("programa",1, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -578,7 +585,17 @@ class CUP$parser$actions {
           case 19: // sentencias ::= sentencias sentencia 
             {
               Object RESULT =null;
-		 reglas.add("[Regla 17] sentencias sentencia"); 
+		int ssleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int ssright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Object ss = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int sleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		 
+        ss.add(s);
+        RESULT = ss;
+        reglas.add("[Regla 17] sentencias sentencia"); 
+        
               CUP$parser$result = parser.getSymbolFactory().newSymbol("sentencias",11, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -587,7 +604,15 @@ class CUP$parser$actions {
           case 20: // sentencias ::= sentencia 
             {
               Object RESULT =null;
-		 reglas.add("[Regla 18] sentencia"); 
+		int sleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int sright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object s = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		 
+        new ArrayList<NodoSentencia>();
+        a.add(s);
+        RESULT = a;
+        reglas.add("[Regla 18] sentencia"); 
+        
               CUP$parser$result = parser.getSymbolFactory().newSymbol("sentencias",11, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -938,8 +963,20 @@ class CUP$parser$actions {
           case 58: // factor ::= MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN expresiones BRACK_CLOSE PAREN_CLOSE 
             {
               Object RESULT =null;
-		 
-        reglas.add("[Regla 56] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN expresiones BRACK_CLOSE PAREN_CLOSE"); 
+		int limInfleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-7)).left;
+		int limInfright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-7)).right;
+		Object limInf = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-7)).value;
+		int limSupleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)).left;
+		int limSupright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)).right;
+		Object limSup = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-5)).value;
+		int listaleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
+		int listaright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
+		Object lista = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
+		
+                NodoMiddle nodo = new NodoMiddle(limInf, limSup, lista);
+                RESULT = nodo;
+                reglas.add("[Regla 56] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN expresiones BRACK_CLOSE PAREN_CLOSE"); 
+                
               CUP$parser$result = parser.getSymbolFactory().newSymbol("factor",24, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -948,9 +985,17 @@ class CUP$parser$actions {
           case 59: // factor ::= MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE 
             {
               Object RESULT =null;
+		int limInfleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).left;
+		int limInfright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).right;
+		Object limInf = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-6)).value;
+		int limSupleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).left;
+		int limSupright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).right;
+		Object limSup = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-4)).value;
 		 
-        reglas.add("[Regla 57] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE"); 
-
+                NodoMiddle nodo = new NodoMiddle(limInf, limSup, new ArrayList<>());
+                RESULT = nodo;
+                reglas.add("[Regla 57] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE"); 
+                
               CUP$parser$result = parser.getSymbolFactory().newSymbol("factor",24, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;

@@ -1,6 +1,7 @@
 package app;
 import java_cup.runtime.*;
 import java.util.ArrayList;
+import app.nodes.*;
 import java.util.List;
 
 parser code {:
@@ -39,11 +40,13 @@ parser code {:
         }
     }
 
+    public Nodo padre;   
 
 :}
 
 action code {: 
-
+        public String resultado="";
+        public List<NodoSentencia> a ;
 :}
 
 terminal OP_ASIGN, OP_SUMA, OP_RESTA, OP_DIV, OP_MULT, OP_MOD, OP_POT, OP_MEN, OP_MAY, OP_MAY_IG, OP_MEN_IG, OP_IG,
@@ -84,10 +87,32 @@ sentencias_sin_variables ::= sentencia_sin_variables {: reglas.add("[Regla 12] s
 sentencia_sin_variables ::= impresion_sin_variables {: reglas.add("[Regla 13] impresion_sin_variables"); :};
 impresion_sin_variables ::= WRITE const {: reglas.add("[Regla 14] WRITE const"); :}
         | WRITE CONST_STR {: reglas.add("[Regla 15] WRITE CONST_STR"); :};
-programa ::= PROGRAM_BEGIN sentencias PROGRAM_END {: reglas.add("[Regla 16] PROGRAM_BEGIN sentencias PROGRAM_END"); :};
-sentencias ::= sentencias sentencia {: reglas.add("[Regla 17] sentencias sentencia"); :};
-sentencias ::= sentencia {: reglas.add("[Regla 18] sentencia"); :};
-sentencia ::= asignacion {: reglas.add("[Regla 19] asignacion"); :};
+
+programa ::= PROGRAM_BEGIN sentencias:s PROGRAM_END {: 
+        RESULT = new NodoPrograma(s);        
+        reglas.add("[Regla 16] PROGRAM_BEGIN sentencias PROGRAM_END"); 
+        :};
+
+sentencias ::= sentencias:ss sentencia:s {: 
+        ss.add(s);
+        RESULT = ss;
+        reglas.add("[Regla 17] sentencias sentencia"); 
+        :};
+
+sentencias ::= sentencia:s {: 
+        a = new ArrayList<NodoSentencia>();
+        a.add(s);
+        RESULT = a;
+        reglas.add("[Regla 18] sentencia"); 
+        :};
+
+sentencias ::= {: RESULT = new ArrayList<NodoSentencia>(); :};
+
+sentencia ::= asignacion:asig {: 
+        RESULT = asig;
+        reglas.add("[Regla 19] asignacion"); 
+        :};
+
 sentencia ::= iteracion {: reglas.add("[Regla 20] iteracion"); :};
 sentencia ::= seleccion {: reglas.add("[Regla 21] seleccion"); :};
 sentencia ::= impresion {: reglas.add("[Regla 22] impresion"); :};
@@ -129,14 +154,21 @@ termino ::= termino OP_MULT factor {: reglas.add("[Regla 48] termino OP_MULT fac
         termino OP_POT factor {: reglas.add("[Regla 50] termino OP_POT factor"); :} | 
         termino OP_MOD factor {: reglas.add("[Regla 51] termino OP_MOD factor"); :} | 
         factor {: reglas.add("[Regla 52] factor"); :};
+
 factor ::= PAREN_OPEN expresion PAREN_CLOSE {: reglas.add("[Regla 53] PAREN_OPEN expresion PAREN_CLOSE"); :} | 
         ID {: reglas.add("[Regla 54] ID"); :} | 
         const {: reglas.add("[Regla 55] const"); :} | 
-        MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN expresiones BRACK_CLOSE PAREN_CLOSE {: 
-        reglas.add("[Regla 56] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN expresiones BRACK_CLOSE PAREN_CLOSE"); :} | 
-        MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE {: 
-        reglas.add("[Regla 57] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE"); 
-:};
+        MIDDLE PAREN_OPEN expresion:limInf PUNTO_COMA expresion:limSup PUNTO_COMA BRACK_OPEN expresiones:lista BRACK_CLOSE PAREN_CLOSE {:
+                NodoMiddle nodo = new NodoMiddle(limInf, limSup, lista);
+                RESULT = nodo;
+                reglas.add("[Regla 56] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN expresiones BRACK_CLOSE PAREN_CLOSE"); 
+                :} | 
+        MIDDLE PAREN_OPEN expresion:limInf PUNTO_COMA expresion:limSup PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE {: 
+                NodoMiddle nodo = new NodoMiddle(limInf, limSup, new ArrayList<>());
+                RESULT = nodo;
+                reglas.add("[Regla 57] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE"); 
+                :};
+
 const ::= CONST_INT {: reglas.add("[Regla 58] CONST_INT"); :} | 
         CONST_DOU {: reglas.add("[Regla 59] CONST_DOU"); :} | 
         CONST_BIN {: reglas.add("[Regla 60] CONST_BIN"); :} | 
