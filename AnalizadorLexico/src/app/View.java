@@ -30,6 +30,8 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
+import app.nodes.NodoPrograma;
+
 public class View {
 
   public JFrame frame;
@@ -247,16 +249,43 @@ public class View {
             try {
               FileReader fileReader = new FileReader(file);
               BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+              StringBuilder contenido = new StringBuilder();
+
               String linea;
               while ((linea = bufferedReader.readLine()) != null) {
-                inputTextArea.append(linea + "\n");
+                contenido.append(linea).append("\n");
               }
 
               bufferedReader.close();
+
+              inputTextArea.setText(contenido.toString()); // Mostralo en la UI
+
+              StringReader stringReader = new StringReader(contenido.toString());
+              
+              Lexico lexer = new Lexico(stringReader);
+              parser parser = new parser(lexer, lexer.getTS());
+
+              Object resultado = parser.parse().value;
+
+              if (resultado == null) {
+                  System.err.println("Error: El parser devolvió null. Revisa que la entrada sea válida y que todas las reglas asignen RESULT.");
+                  JOptionPane.showMessageDialog(null, parser.getErrorMsg(), "Error de sintaxis", JOptionPane.ERROR_MESSAGE);
+                  return;
+              }
+              
+              NodoPrograma programa = (NodoPrograma) resultado;
+
+              FileWriter archivo = new FileWriter("arbol.dot");
+              PrintWriter pw = new PrintWriter(archivo);
+              pw.println(programa.graficar());
+              archivo.close();
+
+
             } catch (Exception error) {
               JOptionPane.showMessageDialog(
                 null,
-                "Error",
+                "Error: " + error,
                 "Error al abrir el archivo",
                 JOptionPane.ERROR_MESSAGE
               );
