@@ -1,8 +1,8 @@
 package app;
 import java_cup.runtime.*;
 import java.util.ArrayList;
-import app.nodes.*;
 import java.util.List;
+import app.nodes.*;
 
 parser code {:
     private List<String> reglas = new ArrayList<String>();
@@ -40,13 +40,10 @@ parser code {:
         }
     }
 
-    public Nodo padre;   
 
 :}
 
 action code {: 
-        public String resultado="";
-        public List<NodoSentencia> a ;
 :}
 
 terminal OP_ASIGN, OP_SUMA, OP_RESTA, OP_DIV, OP_MULT, OP_MOD, OP_POT, OP_MEN, OP_MAY, OP_MAY_IG, OP_MEN_IG, OP_IG,
@@ -54,13 +51,22 @@ OP_DIST, OP_AND, OP_OR, OP_NOT, PAREN_OPEN, PAREN_CLOSE, BLOCK_BEG, BLOCK_END, B
 DOS_PUNTOS, WRITE, ID, CONST_INT, CONST_DOU, CONST_STR, CONST_BIN, CONST_HEX, INTEGER, STRING, FLOAT,
 WHILE, IF, ELSE, DEFINE, DEFINE_END, PROGRAM_BEGIN, PROGRAM_END, MIDDLE;
 
-non terminal codigo, programa, definiciones, declaraciones, inicio_declaracion, declaracion, tipo, programa_sin_variables, 
-sentencias_sin_variables, sentencia_sin_variables, impresion_sin_variables, sentencias, sentencia, impresion, asignacion, identificador,
-seleccion, iteracion, condicion, comparacion, comparador, expresiones, expresion, termino, factor, const;
+non terminal codigo, definiciones, declaraciones, inicio_declaracion, declaracion, tipo, programa_sin_variables, 
+sentencias_sin_variables, sentencia_sin_variables, impresion_sin_variables, impresion, asignacion, identificador,
+seleccion, iteracion, condicion, comparacion, comparador, termino, factor, const;
+
+non terminal List<NodoSentencia> sentencias;
+non terminal NodoSentencia sentencia;
+non terminal NodoExpresion expresion;
+non terminal List<NodoExpresion> expresiones;
+non terminal NodoPrograma programa;
 
 start with codigo;
 
-codigo ::= definiciones programa {: reglas.add("[Regla 0] codigo: El programa compila correctamente"); :};
+codigo ::= definiciones programa:c {: 
+        RESULT = c;
+        reglas.add("[Regla 0] codigo: El programa compila correctamente"); 
+        :};
 codigo ::= programa_sin_variables {: reglas.add("[Regla 0] codigo: El programa compila correctamente"); :};
 definiciones ::= DEFINE declaraciones DEFINE_END {: reglas.add("[Regla 1] DEFINE declaraciones DEFINE_END"); :};
 declaraciones ::= declaraciones inicio_declaracion {: reglas.add("[Regla 2] declaraciones inicio_declaracion"); :};
@@ -89,37 +95,22 @@ impresion_sin_variables ::= WRITE const {: reglas.add("[Regla 14] WRITE const");
         | WRITE CONST_STR {: reglas.add("[Regla 15] WRITE CONST_STR"); :};
 
 programa ::= PROGRAM_BEGIN sentencias:s PROGRAM_END {: 
-        RESULT = new NodoPrograma(s);        
+        RESULT = new NodoPrograma(s);
         reglas.add("[Regla 16] PROGRAM_BEGIN sentencias PROGRAM_END"); 
         :};
 
-sentencias ::= sentencias:ss sentencia:s {: 
-        ss.add(s);
-        RESULT = ss;
-        reglas.add("[Regla 17] sentencias sentencia"); 
-        :};
-
-sentencias ::= sentencia:s {: 
-        a = new ArrayList<NodoSentencia>();
-        a.add(s);
-        RESULT = a;
-        reglas.add("[Regla 18] sentencia"); 
-        :};
-
-sentencias ::= {: RESULT = new ArrayList<NodoSentencia>(); :};
-
-sentencia ::= asignacion:asig {: 
-        RESULT = asig;
-        reglas.add("[Regla 19] asignacion"); 
-        :};
-
+sentencias ::= sentencias sentencia {: reglas.add("[Regla 17] sentencias sentencia"); :};
+sentencias ::= sentencia {: reglas.add("[Regla 18] sentencia"); :};
+sentencia ::= asignacion {: reglas.add("[Regla 19] asignacion"); :};
 sentencia ::= iteracion {: reglas.add("[Regla 20] iteracion"); :};
 sentencia ::= seleccion {: reglas.add("[Regla 21] seleccion"); :};
 sentencia ::= impresion {: reglas.add("[Regla 22] impresion"); :};
 impresion ::= WRITE const {: reglas.add("[Regla 23] WRITE const"); :} | 
         WRITE ID {: reglas.add("[Regla 24] WRITE ID"); :} | 
         WRITE CONST_STR {:reglas.add("[Regla 25] WRITE CONST_STR");:};
-asignacion ::= identificador OP_ASIGN expresion {: reglas.add("[Regla 26] identificador OP_ASIGN expresion"); :} | 
+asignacion ::= identificador OP_ASIGN expresion {:
+                reglas.add("[Regla 26] identificador OP_ASIGN expresion"); 
+        :} | 
         identificador OP_ASIGN CONST_STR {: reglas.add("[Regla 27] identificador OP_ASIGN CONST_STR"); :};
         identificador ::= identificador OP_ASIGN ID {: reglas.add("[Regla 28] identificador OP_ASIGN ID"); :};
         identificador ::= ID {: reglas.add("[Regla 29] ID"); :};
@@ -144,11 +135,24 @@ comparador ::= OP_MAY {: reglas.add("[Regla 37] OP_MAY"); :} | OP_MEN {: reglas.
         OP_MAY_IG {: reglas.add("[Regla 40] OP_MAY_IG"); :} | 
         OP_IG {: reglas.add("[Regla 41] OP_IG"); :} | 
         OP_DIST {: reglas.add("[Regla 42] OP_DIST"); :};
-expresiones ::= expresiones COMA expresion {: reglas.add("[Regla 43] expresiones COMA expresion"); :};
-expresiones ::= expresion {: reglas.add("[Regla 44] expresion"); :};
+
+expresiones::= expresiones:es COMA expresion:e {:
+        es.add(e);
+        RESULT = es;
+        reglas.add("[Regla 43] expresiones COMA expresion"); 
+        :};
+
+expresiones ::= expresion:e {: 
+        List<NodoExpresion> exs = new ArrayList<NodoExpresion>();
+        exs.add(e);
+        RESULT = exs;
+        reglas.add("[Regla 44] expresion"); 
+        :};
+
 expresion ::= expresion OP_SUMA termino {: reglas.add("[Regla 45] expresion OP_SUMA termino"); :} | 
 expresion OP_RESTA termino {: reglas.add("[Regla 46] expresion OP_RESTA termino"); :} | 
         termino {: reglas.add("[Regla 47] termino"); :};
+
 termino ::= termino OP_MULT factor {: reglas.add("[Regla 48] termino OP_MULT factor"); :}  | 
         termino OP_DIV factor {: reglas.add("[Regla 49] termono OP_DIV factor"); :} | 
         termino OP_POT factor {: reglas.add("[Regla 50] termino OP_POT factor"); :} | 
@@ -158,27 +162,15 @@ termino ::= termino OP_MULT factor {: reglas.add("[Regla 48] termino OP_MULT fac
 factor ::= PAREN_OPEN expresion PAREN_CLOSE {: reglas.add("[Regla 53] PAREN_OPEN expresion PAREN_CLOSE"); :} | 
         ID {: reglas.add("[Regla 54] ID"); :} | 
         const {: reglas.add("[Regla 55] const"); :} | 
-        MIDDLE PAREN_OPEN expresion:limInf PUNTO_COMA expresion:limSup PUNTO_COMA BRACK_OPEN expresiones:lista BRACK_CLOSE PAREN_CLOSE {:
-                NodoMiddle nodo = new NodoMiddle(limInf, limSup, lista);
-                RESULT = nodo;
+        MIDDLE PAREN_OPEN expresion:limInf PUNTO_COMA expresion:limSup PUNTO_COMA BRACK_OPEN expresiones:e BRACK_CLOSE PAREN_CLOSE {:
+                RESULT = new NodoMiddle(limInf, limSup, e);
                 reglas.add("[Regla 56] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN expresiones BRACK_CLOSE PAREN_CLOSE"); 
-                :} | 
-        MIDDLE PAREN_OPEN expresion:limInf PUNTO_COMA expresion:limSup PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE {: 
-                NodoMiddle nodo = new NodoMiddle(limInf, limSup, new ArrayList<>());
-                RESULT = nodo;
+        :} | 
+        MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE {: 
                 reglas.add("[Regla 57] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE"); 
-                :};
+        :};
 
 const ::= CONST_INT {: reglas.add("[Regla 58] CONST_INT"); :} | 
         CONST_DOU {: reglas.add("[Regla 59] CONST_DOU"); :} | 
         CONST_BIN {: reglas.add("[Regla 60] CONST_BIN"); :} | 
         CONST_HEX {: reglas.add("[Regla 61] CONST_HEX"); :};
-
-
-
-
-
-
-
-
-

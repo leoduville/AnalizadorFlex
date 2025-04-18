@@ -2,7 +2,7 @@ package app.nodes;
 
 import java.util.List;
 
-public class NodoMiddle extends Nodo{
+public class NodoMiddle extends NodoExpresion {
     
     public NodoExpresion limiteInferior;
     public NodoExpresion limiteSuperior;
