@@ -1,50 +1,71 @@
 package app.nodes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NodoMiddle extends NodoExpresion {
-    
-    public NodoExpresion limiteInferior;
-    public NodoExpresion limiteSuperior;
-    public List<NodoExpresion> lista;
 
-    public NodoMiddle(NodoExpresion limiteInferior, NodoExpresion limiteSuperior, List<NodoExpresion> lista) {
+    private final List<NodoIf> ifs = new ArrayList<>();
+    private final NodoExpresion limInf, limSup;
+    private final List<NodoExpresion> valores;
+
+    public NodoMiddle(NodoExpresion limInf,
+                      NodoExpresion limSup,
+                      List<NodoExpresion> valores) {
         super("MIDDLE");
-        this.limiteInferior = limiteInferior;
-        this.limiteSuperior = limiteSuperior;
-        this.lista = lista;
+        this.limInf   = limInf;
+        this.limSup   = limSup;
+        this.valores  = valores;
+        construirIfs();
+    }
+
+    public void addIf(NodoIf ifNode) {
+        ifs.add(ifNode);
+    }
+
+    private void construirIfs() {
+
+        if (!(limInf instanceof NodoConstante) || !(limSup instanceof NodoConstante)) {
+            System.err.println("Error: Los límites del MIDDLE deben ser constantes.");
+            return;
+        }
+
+        for (NodoExpresion v : valores) {
+            // cada constante la duplicamos para no reciclarla
+            NodoConstante c1 = new NodoConstante(Integer.parseInt(v.getValor()));
+            NodoConstante c2 = new NodoConstante(Integer.parseInt(v.getValor()));
+            NodoConstante c3 = new NodoConstante(Integer.parseInt(v.getValor()));
+
+            NodoConstante lInf = new NodoConstante(Integer.parseInt(limInf.getValor()));
+            NodoConstante lSup = new NodoConstante(Integer.parseInt(limSup.getValor()));
+
+            NodoExpresionBooleana gt = new NodoMayor(c1, lInf);
+            NodoExpresionBooleana lt = new NodoMenor(c2, lSup);
+            NodoExpresionBooleana cond = new NodoAnd(gt, lt);
+
+            NodoIdentificador res     = new NodoIdentificador("resultado");
+            NodoIdentificador res2     = new NodoIdentificador("resultado");
+
+            NodoExpresion suma         = new NodoSuma(res, c3);
+            NodoAsignacion asignacion  = new NodoAsignacion(res2, suma);
+
+            this.addIf(new NodoIf(cond, List.of(asignacion), null));
+        }
     }
 
     @Override
     protected String graficar(String idPadre) {
-        final String miId = "middle_" + getIdNodo();  // Crear un ID único para el nodo
-    
+        final String miId = getIdNodo();
         StringBuilder resultado = new StringBuilder();
-    
-        // Crear el nodo Middle
-        resultado.append(miId + " [label=\"Middle\"]\n");
-    
-        // Agregar relaciones con los elementos de la condición
-        resultado.append(idPadre + " -- " + miId + "\n");  // Relación con el nodo padre
-    
-        // Relación con los límites
-        if (limiteInferior != null) {
-            resultado.append(miId + " -- " + limiteInferior.graficar(miId) + "\n");
+
+        // Nodo MIDDLE principal
+        resultado.append(super.graficar(idPadre));
+
+        // Graficar cada if como hijo del nodo middle
+        for (NodoIf nodoIf : ifs) {
+            resultado.append(nodoIf.graficar(miId));
         }
-    
-        if (limiteSuperior != null) {
-            resultado.append(miId + " -- " + limiteSuperior.graficar(miId) + "\n");
-        }
-    
-        // Agregar relaciones con los elementos de la lista (si existen)
-        if (lista != null) {
-            for (NodoExpresion expr : lista) {
-                resultado.append(miId + " -- " + expr.graficar(miId) + "\n");
-            }
-        }
-    
+
         return resultado.toString();
     }
-    
-
 }

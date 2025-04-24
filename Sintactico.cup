@@ -1,176 +1,302 @@
-package app;
-import java_cup.runtime.*;
-import java.util.ArrayList;
-import java.util.List;
-import app.nodes.*;
+        package app;
+        import java_cup.runtime.*;
+        import java.util.ArrayList;
+        import java.util.List;
+        import app.nodes.*;
 
-parser code {:
-    private List<String> reglas = new ArrayList<String>();
-    private static List<SymbolTableEntry> ts = new ArrayList<SymbolTableEntry>();
-    private static String errorMsg;
+        parser code {:
+        private List<String> reglas = new ArrayList<String>();
+        private static List<SymbolTableEntry> ts = new ArrayList<SymbolTableEntry>();
+        private static String errorMsg;
 
-    public parser(java_cup.runtime.Scanner s, ArrayList<SymbolTableEntry> table) {
-        super(s);
-        parser.ts = table;
-    }
-
-    // Metodo al que se llama automaticamente ante algun error sintactico.
-    public void syntax_error(Symbol s){
-        errorMsg = "Error en la linea " + (s.right - 1) + ". "
-            + s + " no reconocido. valor " + s.value;
-    }
-
-    public List<String> getList() {
-        return this.reglas;
-    }
-    
-    public static List<SymbolTableEntry> getTS() {
-        return ts;
-    }
-
-    public static String getErrorMsg() {
-        return errorMsg;
-    }
-
-    public void agregarTipo(Object id, Object type) {
-        for (SymbolTableEntry entrada : ts) {
-            if (entrada.getToken().equals("ID") && entrada.getNombre().equals(id)) {
-                entrada.tipo = (String) type;
-            }
+        public parser(java_cup.runtime.Scanner s, ArrayList<SymbolTableEntry> table) {
+                super(s);
+                parser.ts = table;
         }
-    }
+
+        // Metodo al que se llama automaticamente ante algun error sintactico.
+        public void syntax_error(Symbol s){
+                errorMsg = "Error en la linea " + (s.right - 1) + ". "
+                + s + " no reconocido. valor " + s.value;
+        }
+
+        public List<String> getList() {
+                return this.reglas;
+        }
+        
+        public static List<SymbolTableEntry> getTS() {
+                return ts;
+        }
+
+        public static String getErrorMsg() {
+                return errorMsg;
+        }
+
+        public void agregarTipo(Object id, Object type) {
+                for (SymbolTableEntry entrada : ts) {
+                if (entrada.getToken().equals("ID") && entrada.getNombre().equals(id)) {
+                        entrada.tipo = (String) type;
+                }
+                }
+        }
 
 
-:}
+        :}
 
-action code {: 
-:}
+        action code {:
+        :}
 
-terminal OP_ASIGN, OP_SUMA, OP_RESTA, OP_DIV, OP_MULT, OP_MOD, OP_POT, OP_MEN, OP_MAY, OP_MAY_IG, OP_MEN_IG, OP_IG,
-OP_DIST, OP_AND, OP_OR, OP_NOT, PAREN_OPEN, PAREN_CLOSE, BLOCK_BEG, BLOCK_END, BRACK_OPEN, BRACK_CLOSE, PUNTO_COMA, COMA, PUNTO, 
-DOS_PUNTOS, WRITE, ID, CONST_INT, CONST_DOU, CONST_STR, CONST_BIN, CONST_HEX, INTEGER, STRING, FLOAT,
-WHILE, IF, ELSE, DEFINE, DEFINE_END, PROGRAM_BEGIN, PROGRAM_END, MIDDLE;
+        terminal OP_ASIGN, OP_SUMA, OP_RESTA, OP_DIV, OP_MULT, OP_MOD, OP_POT, PAREN_OPEN, PAREN_CLOSE, BLOCK_BEG, BLOCK_END, BRACK_OPEN, BRACK_CLOSE, PUNTO_COMA, COMA, PUNTO, 
+        DOS_PUNTOS, WRITE, CONST_INT, CONST_DOU, CONST_BIN, CONST_HEX, INTEGER, STRING, FLOAT,
+        WHILE, IF, ELSE, DEFINE, DEFINE_END, PROGRAM_BEGIN, PROGRAM_END, MIDDLE;
+        terminal String ID, CONST_STR, OP_AND, OP_OR, OP_NOT, OP_MEN, OP_MAY, OP_MAY_IG, OP_MEN_IG, OP_IG, OP_DIST;
 
-non terminal codigo, definiciones, declaraciones, inicio_declaracion, declaracion, tipo, programa_sin_variables, 
-sentencias_sin_variables, sentencia_sin_variables, impresion_sin_variables, impresion, asignacion, identificador,
-seleccion, iteracion, condicion, comparacion, comparador, termino, factor, const;
+        non terminal codigo, definiciones, declaraciones, inicio_declaracion, declaracion, tipo, programa_sin_variables, 
+        sentencias_sin_variables, sentencia_sin_variables, impresion_sin_variables;
 
-non terminal List<NodoSentencia> sentencias;
-non terminal NodoSentencia sentencia;
-non terminal NodoExpresion expresion;
-non terminal List<NodoExpresion> expresiones;
-non terminal NodoPrograma programa;
+        non terminal String const, comparador;
+        non terminal List<NodoSentencia> sentencias;
+        non terminal NodoSentencia sentencia, asignacion;
+        non terminal NodoExpresion expresion, termino, factor;
+        non terminal List<NodoExpresion> expresiones;
+        non terminal NodoCiclo iteracion;
+        non terminal NodoIf seleccion;
+        non terminal NodoExpresionBooleana condicion, comparacion;
+        non terminal NodoImpresion impresion;
+        non terminal NodoPrograma programa;
+        non terminal String identificador;
 
-start with codigo;
+        start with codigo;
 
-codigo ::= definiciones programa:c {: 
-        RESULT = c;
-        reglas.add("[Regla 0] codigo: El programa compila correctamente"); 
+        codigo ::= definiciones programa:c {: 
+                RESULT = c;
+                reglas.add("[Regla 0] codigo: El programa compila correctamente"); 
+                :};
+
+        codigo ::= programa_sin_variables {: reglas.add("[Regla 0] codigo: El programa compila correctamente"); :};
+        definiciones ::= DEFINE declaraciones DEFINE_END {: reglas.add("[Regla 1] DEFINE declaraciones DEFINE_END"); :};
+        declaraciones ::= declaraciones inicio_declaracion {: reglas.add("[Regla 2] declaraciones inicio_declaracion"); :};
+        declaraciones ::= inicio_declaracion {: reglas.add("[Regla 3] inicio_declaracion"); :};
+
+        inicio_declaracion ::= OP_MEN tipo:type declaracion ID:id OP_MAY {: 
+                reglas.add("[Regla 4] OP_MEN tipo declaracion ID OP_MAY"); 
+                RESULT = id;
+                agregarTipo(id, type);
         :};
-codigo ::= programa_sin_variables {: reglas.add("[Regla 0] codigo: El programa compila correctamente"); :};
-definiciones ::= DEFINE declaraciones DEFINE_END {: reglas.add("[Regla 1] DEFINE declaraciones DEFINE_END"); :};
-declaraciones ::= declaraciones inicio_declaracion {: reglas.add("[Regla 2] declaraciones inicio_declaracion"); :};
-declaraciones ::= inicio_declaracion {: reglas.add("[Regla 3] inicio_declaracion"); :}; 
-inicio_declaracion ::= OP_MEN tipo:type declaracion ID:id OP_MAY {: 
-    reglas.add("[Regla 4] OP_MEN tipo declaracion ID OP_MAY"); 
-    RESULT = id;
-    agregarTipo(id, type);
-:};
-declaracion ::= COMA tipo:type declaracion ID:id COMA {: 
-    reglas.add("[Regla 5] COMA tipo declaracion ID COMA");
-    RESULT = id;
-    agregarTipo(id, type);
-:};
-declaracion ::= OP_MAY DOS_PUNTOS OP_MEN {: reglas.add("[Regla 6] OP_MAY DOS_PUNTOS OP_MEN"); :};
-tipo ::= INTEGER:integer{: reglas.add("[Regla 7] INTEGER"); RESULT = integer; :} | 
-        STRING:string {: reglas.add("[Regla 8] STRING"); RESULT = string; :} | 
-        FLOAT:fl {: reglas.add("[Regla 9] FLOAT"); RESULT = fl; :}; 
-programa_sin_variables ::= PROGRAM_BEGIN sentencias_sin_variables PROGRAM_END 
-        {: reglas.add("[Regla 10] PROGRAM_BEGIN sentencias_sin_variables PROGRAM_END"); :};
-sentencias_sin_variables ::= sentencias_sin_variables sentencia_sin_variables 
-        {: reglas.add("[Regla 11] sentencias_sin_variables sentencia_sin_variables"); :};
-sentencias_sin_variables ::= sentencia_sin_variables {: reglas.add("[Regla 12] sentencia_sin_variables"); :};
-sentencia_sin_variables ::= impresion_sin_variables {: reglas.add("[Regla 13] impresion_sin_variables"); :};
-impresion_sin_variables ::= WRITE const {: reglas.add("[Regla 14] WRITE const"); :}
-        | WRITE CONST_STR {: reglas.add("[Regla 15] WRITE CONST_STR"); :};
-
-programa ::= PROGRAM_BEGIN sentencias:s PROGRAM_END {: 
-        RESULT = new NodoPrograma(s);
-        reglas.add("[Regla 16] PROGRAM_BEGIN sentencias PROGRAM_END"); 
+        declaracion ::= COMA tipo:type declaracion ID:id COMA {: 
+                reglas.add("[Regla 5] COMA tipo declaracion ID COMA");
+                RESULT = id;
+                agregarTipo(id, type);
         :};
 
-sentencias ::= sentencias sentencia {: reglas.add("[Regla 17] sentencias sentencia"); :};
-sentencias ::= sentencia {: reglas.add("[Regla 18] sentencia"); :};
-sentencia ::= asignacion {: reglas.add("[Regla 19] asignacion"); :};
-sentencia ::= iteracion {: reglas.add("[Regla 20] iteracion"); :};
-sentencia ::= seleccion {: reglas.add("[Regla 21] seleccion"); :};
-sentencia ::= impresion {: reglas.add("[Regla 22] impresion"); :};
-impresion ::= WRITE const {: reglas.add("[Regla 23] WRITE const"); :} | 
-        WRITE ID {: reglas.add("[Regla 24] WRITE ID"); :} | 
-        WRITE CONST_STR {:reglas.add("[Regla 25] WRITE CONST_STR");:};
-asignacion ::= identificador OP_ASIGN expresion {:
-                reglas.add("[Regla 26] identificador OP_ASIGN expresion"); 
-        :} | 
-        identificador OP_ASIGN CONST_STR {: reglas.add("[Regla 27] identificador OP_ASIGN CONST_STR"); :};
+        declaracion ::= OP_MAY DOS_PUNTOS OP_MEN {: reglas.add("[Regla 6] OP_MAY DOS_PUNTOS OP_MEN"); :};
+        tipo ::= INTEGER:integer{: reglas.add("[Regla 7] INTEGER"); RESULT = integer; :} | 
+                STRING:string {: reglas.add("[Regla 8] STRING"); RESULT = string; :} | 
+                FLOAT:fl {: reglas.add("[Regla 9] FLOAT"); RESULT = fl; :}; 
+        programa_sin_variables ::= PROGRAM_BEGIN sentencias_sin_variables PROGRAM_END 
+                {: reglas.add("[Regla 10] PROGRAM_BEGIN sentencias_sin_variables PROGRAM_END"); :};
+        sentencias_sin_variables ::= sentencias_sin_variables sentencia_sin_variables 
+                {: reglas.add("[Regla 11] sentencias_sin_variables sentencia_sin_variables"); :};
+        sentencias_sin_variables ::= sentencia_sin_variables {: reglas.add("[Regla 12] sentencia_sin_variables"); :};
+        sentencia_sin_variables ::= impresion_sin_variables {: reglas.add("[Regla 13] impresion_sin_variables"); :};
+        impresion_sin_variables ::= WRITE const {: reglas.add("[Regla 14] WRITE const"); :}
+                | WRITE CONST_STR {: reglas.add("[Regla 15] WRITE CONST_STR"); :};
+
+        programa ::= PROGRAM_BEGIN sentencias:s PROGRAM_END {: 
+                RESULT = new NodoPrograma(s);
+                reglas.add("[Regla 16] PROGRAM_BEGIN sentencias PROGRAM_END"); 
+                :};
+
+        sentencias::= sentencias:ss COMA sentencia:s {:
+                ss.add(s);
+                RESULT = ss;
+                reglas.add("[Regla 43] sentencias COMA sentencia"); 
+                :};
+
+        sentencias ::= sentencia:s {: 
+                List<NodoSentencia> ss = new ArrayList<NodoSentencia>();
+                ss.add(s);
+                RESULT = ss;
+                reglas.add("[Regla 44] expresion"); 
+                :};
+
+        sentencia ::= asignacion:a {: 
+                        RESULT = a;
+                        reglas.add("[Regla 19] asignacion"); 
+                :};
+
+        sentencia ::= iteracion:i {:
+                        RESULT = i; 
+                        reglas.add("[Regla 20] iteracion"); 
+                :};
+
+        sentencia ::= seleccion:s {:
+                        RESULT = s;
+                        reglas.add("[Regla 21] seleccion"); 
+                :};
+
+        sentencia ::= impresion:i {:
+                        RESULT = i; 
+                        reglas.add("[Regla 22] impresion"); 
+                :};
+
+        impresion ::= WRITE const:c {: 
+                        RESULT = new NodoImpresion(c);
+                        reglas.add("[Regla 23] WRITE const"); 
+                        :} | 
+                WRITE ID:id {:
+                        RESULT = new NodoImpresion(id); 
+                        reglas.add("[Regla 24] WRITE ID"); 
+                        :} | 
+                WRITE CONST_STR:cs {:
+                        RESULT = new NodoImpresion(cs);
+                        reglas.add("[Regla 25] WRITE CONST_STR");
+                        :};
+
+        asignacion ::= identificador:id OP_ASIGN expresion:e {:
+                        RESULT = new NodoAsignacion(new NodoIdentificador(id), e);
+                        reglas.add("[Regla 26] identificador OP_ASIGN expresion"); 
+                :} | 
+                identificador OP_ASIGN CONST_STR {: reglas.add("[Regla 27] identificador OP_ASIGN CONST_STR"); :};
+                
         identificador ::= identificador OP_ASIGN ID {: reglas.add("[Regla 28] identificador OP_ASIGN ID"); :};
-        identificador ::= ID {: reglas.add("[Regla 29] ID"); :};
-seleccion ::= IF PAREN_OPEN condicion PAREN_CLOSE BLOCK_BEG sentencias BLOCK_END ELSE BLOCK_BEG sentencias BLOCK_END {: 
-        reglas.add("[Regla 30] IF PAREN_OPEN condicion PAREN_CLOSE BLOCK_BEG sentencias BLOCK_END ELSE BLOCK_BEG sentencias BLOCK_END");
-:};
-seleccion ::= IF PAREN_OPEN condicion PAREN_CLOSE BLOCK_BEG sentencias BLOCK_END {: 
-        reglas.add("[Regla 31] IF PAREN_OPEN condicion PAREN_CLOSE BLOCK_BEG sentencias BLOCK_END");
-:};
-iteracion ::= WHILE PAREN_OPEN condicion PAREN_CLOSE BLOCK_BEG sentencias BLOCK_END {:
-        reglas.add("[Regla 32] WHILE PAREN_OPEN condicion PAREN_CLOSE BLOCK_BEG sentencias BLOCK_END");
-:};
-condicion ::= comparacion OP_AND comparacion {:
-        reglas.add("[Regla 33] comparacion OP_AND comparacion");
-:};
-condicion ::= comparacion OP_OR comparacion {: reglas.add("[Regla 34] comparacion OP_OR comparacion"); :};
-condicion ::= comparacion {: reglas.add("[Regla 35] comparacion"); :};
-comparacion ::= PAREN_OPEN expresion PAREN_CLOSE comparador PAREN_OPEN expresion PAREN_CLOSE {: 
-        reglas.add("[Regla 36] PAREN_OPEN expresion PAREN_CLOSE comparador PAREN_OPEN expresion PAREN_CLOSE"); :};
-comparador ::= OP_MAY {: reglas.add("[Regla 37] OP_MAY"); :} | OP_MEN {: reglas.add("[Regla 38] OP_MEN"); :} | 
-        OP_MEN_IG {: reglas.add("[Regla 39] OP_MEN_IG"); :} | 
-        OP_MAY_IG {: reglas.add("[Regla 40] OP_MAY_IG"); :} | 
-        OP_IG {: reglas.add("[Regla 41] OP_IG"); :} | 
-        OP_DIST {: reglas.add("[Regla 42] OP_DIST"); :};
+        identificador ::= ID:id {: 
+                RESULT = id;
+                reglas.add("[Regla 29] ID"); 
+                :};
 
-expresiones::= expresiones:es COMA expresion:e {:
-        es.add(e);
-        RESULT = es;
-        reglas.add("[Regla 43] expresiones COMA expresion"); 
+        seleccion ::= IF PAREN_OPEN condicion:c PAREN_CLOSE BLOCK_BEG sentencias:s BLOCK_END ELSE BLOCK_BEG sentencias:se BLOCK_END {:
+                RESULT = new NodoIf(c, s, se);
+                reglas.add("[Regla 30] IF PAREN_OPEN condicion PAREN_CLOSE BLOCK_BEG sentencias BLOCK_END ELSE BLOCK_BEG sentencias BLOCK_END");
         :};
 
-expresiones ::= expresion:e {: 
-        List<NodoExpresion> exs = new ArrayList<NodoExpresion>();
-        exs.add(e);
-        RESULT = exs;
-        reglas.add("[Regla 44] expresion"); 
+        seleccion ::= IF PAREN_OPEN condicion:c PAREN_CLOSE BLOCK_BEG sentencias:s BLOCK_END {: 
+                RESULT = new NodoIf(c, s, null);
+                reglas.add("[Regla 31] IF PAREN_OPEN condicion PAREN_CLOSE BLOCK_BEG sentencias BLOCK_END");
         :};
 
-expresion ::= expresion OP_SUMA termino {: reglas.add("[Regla 45] expresion OP_SUMA termino"); :} | 
-expresion OP_RESTA termino {: reglas.add("[Regla 46] expresion OP_RESTA termino"); :} | 
-        termino {: reglas.add("[Regla 47] termino"); :};
-
-termino ::= termino OP_MULT factor {: reglas.add("[Regla 48] termino OP_MULT factor"); :}  | 
-        termino OP_DIV factor {: reglas.add("[Regla 49] termono OP_DIV factor"); :} | 
-        termino OP_POT factor {: reglas.add("[Regla 50] termino OP_POT factor"); :} | 
-        termino OP_MOD factor {: reglas.add("[Regla 51] termino OP_MOD factor"); :} | 
-        factor {: reglas.add("[Regla 52] factor"); :};
-
-factor ::= PAREN_OPEN expresion PAREN_CLOSE {: reglas.add("[Regla 53] PAREN_OPEN expresion PAREN_CLOSE"); :} | 
-        ID {: reglas.add("[Regla 54] ID"); :} | 
-        const {: reglas.add("[Regla 55] const"); :} | 
-        MIDDLE PAREN_OPEN expresion:limInf PUNTO_COMA expresion:limSup PUNTO_COMA BRACK_OPEN expresiones:e BRACK_CLOSE PAREN_CLOSE {:
-                RESULT = new NodoMiddle(limInf, limSup, e);
-                reglas.add("[Regla 56] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN expresiones BRACK_CLOSE PAREN_CLOSE"); 
-        :} | 
-        MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE {: 
-                reglas.add("[Regla 57] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE"); 
+        iteracion ::= WHILE PAREN_OPEN condicion:c PAREN_CLOSE BLOCK_BEG sentencias:s BLOCK_END {:
+                RESULT = new NodoCiclo(c, s);
+                reglas.add("[Regla 32] WHILE PAREN_OPEN condicion PAREN_CLOSE BLOCK_BEG sentencias BLOCK_END");
         :};
 
-const ::= CONST_INT {: reglas.add("[Regla 58] CONST_INT"); :} | 
-        CONST_DOU {: reglas.add("[Regla 59] CONST_DOU"); :} | 
-        CONST_BIN {: reglas.add("[Regla 60] CONST_BIN"); :} | 
-        CONST_HEX {: reglas.add("[Regla 61] CONST_HEX"); :};
+        condicion ::= comparacion:c1 OP_AND comparacion:c2 {:
+                RESULT = new NodoAnd(c1, c2);
+                reglas.add("[Regla 33] comparacion OP_AND comparacion");
+        :};
+        
+        condicion ::= comparacion:c1 OP_OR comparacion:c2 {:
+                RESULT = new NodoOr(c1, c2);
+                reglas.add("[Regla 34] comparacion OP_OR comparacion"); 
+                :};
+
+        condicion ::= comparacion:c {:
+                RESULT = c;
+                reglas.add("[Regla 35] comparacion"); 
+                :};
+
+        comparacion ::= PAREN_OPEN expresion:ex1 PAREN_CLOSE comparador:c PAREN_OPEN expresion:ex2 PAREN_CLOSE {:
+                RESULT = new NodoComparacion(c, ex1, ex2);
+                reglas.add("[Regla 36] PAREN_OPEN expresion PAREN_CLOSE comparador PAREN_OPEN expresion PAREN_CLOSE"); 
+                :};
+
+        comparador ::= OP_MAY:op {:
+                        RESULT = op;
+                        reglas.add("[Regla 37] OP_MAY"); 
+                :} | OP_MEN:op {:
+                        RESULT = op.toString();
+                        reglas.add("[Regla 38] OP_MEN"); 
+                :} | OP_MEN_IG:op {:
+                        RESULT = op; 
+                        reglas.add("[Regla 39] OP_MEN_IG"); 
+                :} | OP_MAY_IG:op {:
+                        RESULT = op; 
+                        reglas.add("[Regla 40] OP_MAY_IG"); 
+                :} | OP_IG:op {:
+                        RESULT = op; 
+                        reglas.add("[Regla 41] OP_IG"); 
+                :} | OP_DIST:op {:
+                        RESULT = op; 
+                        reglas.add("[Regla 42] OP_DIST"); 
+                :};
+
+        expresiones::= expresiones:es COMA expresion:e {:
+                es.add(e);
+                RESULT = es;
+                reglas.add("[Regla 43] expresiones COMA expresion"); 
+                :};
+
+        expresiones ::= expresion:e {: 
+                List<NodoExpresion> exs = new ArrayList<NodoExpresion>();
+                exs.add(e);
+                RESULT = exs;
+                reglas.add("[Regla 44] expresion"); 
+                :};
+
+        expresion ::= expresion:e OP_SUMA termino:t {:
+                        RESULT = new NodoSuma(e, t);
+                        reglas.add("[Regla 45] expresion OP_SUMA termino"); 
+                :} | 
+                expresion:e OP_RESTA termino:t {: 
+                        RESULT = new NodoResta(e, t);
+                        reglas.add("[Regla 46] expresion OP_RESTA termino"); 
+                :} | 
+                termino:t {: 
+                        RESULT = t;
+                        reglas.add("[Regla 47] termino"); 
+                :};
+
+        termino ::= termino:t OP_MULT factor:f {:
+                        RESULT = new NodoMultiplicacion(t, f); 
+                        reglas.add("[Regla 48] termino OP_MULT factor"); 
+                :}  | 
+                termino:t OP_DIV factor:f {:
+                        RESULT = new NodoDivision(t, f);
+                        reglas.add("[Regla 49] termono OP_DIV factor"); 
+                :} | 
+                termino:t OP_POT factor:f {:
+                        RESULT = new NodoPotencia(t, f);
+                        reglas.add("[Regla 50] termino OP_POT factor"); 
+                :} | 
+                termino:t OP_MOD factor:f {:
+                        RESULT = new NodoModulo(t, f); 
+                        reglas.add("[Regla 51] termino OP_MOD factor"); 
+                :} | 
+                factor:f {: 
+                        RESULT = f;
+                        reglas.add("[Regla 52] factor"); 
+                :};
+
+        factor ::= PAREN_OPEN expresion PAREN_CLOSE {: reglas.add("[Regla 53] PAREN_OPEN expresion PAREN_CLOSE"); :} | 
+                ID:id {: 
+                        RESULT = new NodoIdentificador(id);
+                        reglas.add("[Regla 54] ID");
+                        :} | 
+                const:c {: 
+                        RESULT = new NodoConstante(Integer.parseInt(c));
+                        reglas.add("[Regla 55] const"); 
+                        :} | 
+                MIDDLE PAREN_OPEN expresion:limInf PUNTO_COMA expresion:limSup PUNTO_COMA BRACK_OPEN expresiones:lista BRACK_CLOSE PAREN_CLOSE {:
+                        RESULT = new NodoMiddle(limInf, limSup, lista);
+                        reglas.add("[Regla 56] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN expresiones BRACK_CLOSE PAREN_CLOSE"); 
+                :} | 
+                MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE {: 
+                        reglas.add("[Regla 57] MIDDLE PAREN_OPEN expresion PUNTO_COMA expresion PUNTO_COMA BRACK_OPEN BRACK_CLOSE PAREN_CLOSE"); 
+                :};
+
+        const ::= CONST_INT:i {: 
+                        reglas.add("[Regla 58] CONST_INT"); 
+                        RESULT = i.toString(); 
+                :} | 
+                CONST_DOU:d {: 
+                        reglas.add("[Regla 59] CONST_DOU"); 
+                        RESULT = d.toString(); 
+                :} |   
+                CONST_BIN:b {: 
+                        reglas.add("[Regla 60] CONST_BIN"); 
+                        RESULT = b.toString(); 
+                :} | 
+                CONST_HEX:h {: 
+                        reglas.add("[Regla 61] CONST_HEX"); 
+                        RESULT = h.toString(); 
+                :};

@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
@@ -279,6 +280,38 @@ public class View {
               FileWriter archivo = new FileWriter("arbol.dot");
               PrintWriter pw = new PrintWriter(archivo);
               pw.println(programa.graficar());
+              pw.close();  
+
+              try {
+
+                ProcessBuilder pb = new ProcessBuilder(
+                    "dot",
+                    "-Gsize=20,10",    // lienzo de 20×10 pulgadas
+                    "-Gdpi=300",       // 300 dpi de resolución
+                    "-Tpng",           // formato de salida
+                    "arbol.dot",       // fichero de entrada
+                    "-o", "arbol.png"  // fichero de salida
+                );
+
+                pb.redirectErrorStream(true);
+                Process process = pb.start();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+
+                int exitCode = process.waitFor();
+                if (exitCode == 0) {
+                    System.out.println("Imagen generada correctamente: arbol.png");
+                } else {
+                    System.err.println("Error al generar la imagen con dot. Código de salida: " + exitCode);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
               archivo.close();
 
 

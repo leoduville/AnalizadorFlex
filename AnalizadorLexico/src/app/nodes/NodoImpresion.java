@@ -1,6 +1,6 @@
 package app.nodes;
 
-public class NodoImpresion extends NodoExpresion {
+public class NodoImpresion extends NodoSentencia {
     private final String impresion;
 
     public NodoImpresion(String impresion) {
