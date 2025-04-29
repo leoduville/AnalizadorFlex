@@ -98,13 +98,56 @@ public class View {
             String path = filePath.getText();
             Lexico lexer = new Lexico(reader);
             sintactico = new parser(lexer, lexer.getTS());
-            sintactico.parse();
+            Object resultado = sintactico.parse().value;
             //lexer.next_token();
 
             outputTextArea.setText("");
 
-            // Obtengo la lista de elementos que fue guardando el Lexico
+            if (resultado == null) {
+                System.err.println("Error: El parser devolvió null. Revisa que la entrada sea válida y que todas las reglas asignen RESULT.");
+                JOptionPane.showMessageDialog(null, parser.getErrorMsg(), "Error de sintaxis", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
+            NodoPrograma programa = (NodoPrograma) resultado;
+
+            FileWriter archivo = new FileWriter("arbol.dot");
+            PrintWriter pw = new PrintWriter(archivo);
+            pw.println(programa.graficar());
+            pw.close();
+
+            try {
+
+              ProcessBuilder pb = new ProcessBuilder(
+                  "dot",
+                  "-Gsize=20,10",    // lienzo de 20×10 pulgadas
+                  "-Gdpi=300",       // 300 dpi de resolución
+                  "-Tpng",           // formato de salida
+                  "arbol.dot",       // fichero de entrada
+                  "-o", "arbol.png"  // fichero de salida
+              );
+
+              pb.redirectErrorStream(true);
+              Process process = pb.start();
+
+              BufferedReader reader1 = new BufferedReader(new InputStreamReader(process.getInputStream()));
+              String line;
+              while ((line = reader1.readLine()) != null) {
+                  System.out.println(line);
+              }
+
+              int exitCode = process.waitFor();
+              if (exitCode == 0) {
+                  System.out.println("Imagen generada correctamente: arbol.png");
+              } else {
+                  System.err.println("Error al generar la imagen con dot. Código de salida: " + exitCode);
+              }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            // Obtengo la lista de elementos que fue guardando el Lexico
+              
             //List<String> elements = lexer.getList(); // Obtiene la lista
             List<String> elements = sintactico.getList();
 
@@ -141,7 +184,8 @@ public class View {
               }
 
               writer.close();
-            }
+            }              
+            
           } catch (Exception error) {
           	outputTextArea.setForeground(Color.RED);
             if(!error.getMessage().equals("Can't recover from previous error(s)")) {

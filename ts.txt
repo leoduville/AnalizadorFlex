@@ -9,8 +9,11 @@ _1                        | CONST_INT       | -          | 1                    
 _100                      | CONST_INT       | -          | 100                       |-    
 _2                        | CONST_INT       | -          | 2                         |-    
 _0                        | CONST_INT       | -          | 0                         |-    
-_20                       | CONST_INT       | -          | 20                        |-    
+_NO                       | CONST_STR       | -          | NO                        |2    
+_30                       | CONST_INT       | -          | 30                        |-    
 _50                       | CONST_INT       | -          | 50                        |-    
 _3                        | CONST_INT       | -          | 3                         |-    
 _5                        | CONST_INT       | -          | 5                         |-    
+_10                       | CONST_INT       | -          | 10                        |-    
+_20                       | CONST_INT       | -          | 20                        |-    
 _21                       | CONST_INT       | -          | 21                        |-    
