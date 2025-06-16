@@ -68,4 +68,22 @@ public class NodoMiddle extends NodoExpresion {
 
         return resultado.toString();
     }
+
+    @Override
+    public boolean terminaConResultadoEnPila() {
+        return false; // porque este nodo ya hace el FSTP internamente
+    }
+
+    @Override
+    public String generarAssembler() {
+        StringBuilder asm = new StringBuilder();
+
+        for (NodoIf nodoIf : ifs) {
+            // Para cada if, generamos su assembler
+            asm.append(nodoIf.generarAssembler()).append("\n");
+        }
+
+        return asm.toString();
+}
+
 }

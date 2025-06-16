@@ -4,230 +4,46 @@ graph G {
   edge [arrowhead=vee];
 
 nodo_programa [label="Programa"]
-nodo_1052159197 [label=":="]
-nodo_programa -- nodo_1052159197
-nodo_442641887 [label="ID: var_entera"]
-nodo_1052159197 -- nodo_442641887
-nodo_54 [label="CTE: 1"]
-nodo_1052159197 -- nodo_54
-nodo_1116460391 [label="WHILE"]
-nodo_programa -- nodo_1116460391
-nodo_362282784 [label="<"]
-nodo_1116460391 -- nodo_362282784
-nodo_516716811 [label="ID: var_entera"]
-nodo_362282784 -- nodo_516716811
-nodo_55 [label="CTE: 100"]
-nodo_362282784 -- nodo_55
-nodo_357278680 [label="Cuerpo"]
-nodo_1116460391 -- nodo_357278680
-nodo_158825723 [label="IF"]
-nodo_357278680 -- nodo_158825723
-nodo_590609418 [label="=="]
-nodo_158825723 -- nodo_590609418
-nodo_1581960518 [label="%"]
-nodo_590609418 -- nodo_1581960518
-nodo_383246388 [label="ID: var_entera"]
-nodo_1581960518 -- nodo_383246388
-nodo_56 [label="CTE: 2"]
-nodo_1581960518 -- nodo_56
-nodo_57 [label="CTE: 0"]
-nodo_590609418 -- nodo_57
-nodo_611702449 [label="Then"]
-nodo_158825723 -- nodo_611702449
-nodo_412790169 [label="WRITE: var_string"]
-nodo_611702449 -- nodo_412790169
-nodo_271741745 [label="Else"]
-nodo_158825723 -- nodo_271741745
-nodo_961410883 [label="WRITE: 'NO'"]
-nodo_271741745 -- nodo_961410883
-nodo_856125061 [label=":="]
-nodo_357278680 -- nodo_856125061
-nodo_2117921561 [label="ID: var_entera"]
-nodo_856125061 -- nodo_2117921561
-nodo_2106897428 [label="+"]
-nodo_856125061 -- nodo_2106897428
-nodo_724935434 [label="ID: var_entera"]
-nodo_2106897428 -- nodo_724935434
-nodo_58 [label="CTE: 1"]
-nodo_2106897428 -- nodo_58
-nodo_600740783 [label=":="]
-nodo_programa -- nodo_600740783
-nodo_976470252 [label="ID: resultado"]
-nodo_600740783 -- nodo_976470252
-nodo_1658841002 [label="MIDDLE"]
-nodo_600740783 -- nodo_1658841002
-nodo_1685333256 [label="IF"]
-nodo_1658841002 -- nodo_1685333256
-nodo_871403970 [label="AND"]
-nodo_1685333256 -- nodo_871403970
-nodo_392172528 [label=">"]
-nodo_871403970 -- nodo_392172528
-nodo_64 [label="CTE: 1"]
-nodo_392172528 -- nodo_64
-nodo_67 [label="CTE: 30"]
-nodo_392172528 -- nodo_67
-nodo_178209793 [label="<"]
-nodo_871403970 -- nodo_178209793
-nodo_65 [label="CTE: 1"]
-nodo_178209793 -- nodo_65
-nodo_68 [label="CTE: 50"]
-nodo_178209793 -- nodo_68
-nodo_1325825087 [label="Then"]
-nodo_1685333256 -- nodo_1325825087
-nodo_2018482844 [label=":="]
-nodo_1325825087 -- nodo_2018482844
-nodo_1873275382 [label="ID: resultado"]
-nodo_2018482844 -- nodo_1873275382
-nodo_535299919 [label="+"]
-nodo_2018482844 -- nodo_535299919
-nodo_1676896009 [label="ID: resultado"]
-nodo_535299919 -- nodo_1676896009
-nodo_66 [label="CTE: 1"]
-nodo_535299919 -- nodo_66
-nodo_1743559313 [label="IF"]
-nodo_1658841002 -- nodo_1743559313
-nodo_936650691 [label="AND"]
-nodo_1743559313 -- nodo_936650691
-nodo_1750703113 [label=">"]
-nodo_936650691 -- nodo_1750703113
-nodo_69 [label="CTE: 3"]
-nodo_1750703113 -- nodo_69
-nodo_72 [label="CTE: 30"]
-nodo_1750703113 -- nodo_72
-nodo_283796772 [label="<"]
-nodo_936650691 -- nodo_283796772
-nodo_70 [label="CTE: 3"]
-nodo_283796772 -- nodo_70
-nodo_73 [label="CTE: 50"]
-nodo_283796772 -- nodo_73
-nodo_332488122 [label="Then"]
-nodo_1743559313 -- nodo_332488122
-nodo_86874684 [label=":="]
-nodo_332488122 -- nodo_86874684
-nodo_565241668 [label="ID: resultado"]
-nodo_86874684 -- nodo_565241668
-nodo_1655731475 [label="+"]
-nodo_86874684 -- nodo_1655731475
-nodo_2073413746 [label="ID: resultado"]
-nodo_1655731475 -- nodo_2073413746
-nodo_71 [label="CTE: 3"]
-nodo_1655731475 -- nodo_71
-nodo_310395206 [label="IF"]
-nodo_1658841002 -- nodo_310395206
-nodo_875306645 [label="AND"]
-nodo_310395206 -- nodo_875306645
-nodo_1440087534 [label=">"]
-nodo_875306645 -- nodo_1440087534
-nodo_74 [label="CTE: 5"]
-nodo_1440087534 -- nodo_74
-nodo_77 [label="CTE: 30"]
-nodo_1440087534 -- nodo_77
-nodo_14055806 [label="<"]
-nodo_875306645 -- nodo_14055806
-nodo_75 [label="CTE: 5"]
-nodo_14055806 -- nodo_75
-nodo_78 [label="CTE: 50"]
-nodo_14055806 -- nodo_78
-nodo_281842259 [label="Then"]
-nodo_310395206 -- nodo_281842259
-nodo_1153498729 [label=":="]
-nodo_281842259 -- nodo_1153498729
-nodo_1040208274 [label="ID: resultado"]
-nodo_1153498729 -- nodo_1040208274
-nodo_221168293 [label="+"]
-nodo_1153498729 -- nodo_221168293
-nodo_2030344025 [label="ID: resultado"]
-nodo_221168293 -- nodo_2030344025
-nodo_76 [label="CTE: 5"]
-nodo_221168293 -- nodo_76
-nodo_989076902 [label=":="]
-nodo_programa -- nodo_989076902
-nodo_105138091 [label="ID: resultado"]
-nodo_989076902 -- nodo_105138091
-nodo_2097448492 [label="MIDDLE"]
-nodo_989076902 -- nodo_2097448492
-nodo_552040586 [label="IF"]
-nodo_2097448492 -- nodo_552040586
-nodo_988043293 [label="AND"]
-nodo_552040586 -- nodo_988043293
-nodo_507062773 [label=">"]
-nodo_988043293 -- nodo_507062773
-nodo_84 [label="CTE: 20"]
-nodo_507062773 -- nodo_84
-nodo_87 [label="CTE: 10"]
-nodo_507062773 -- nodo_87
-nodo_1205205496 [label="<"]
-nodo_988043293 -- nodo_1205205496
-nodo_85 [label="CTE: 20"]
-nodo_1205205496 -- nodo_85
-nodo_88 [label="CTE: 50"]
-nodo_1205205496 -- nodo_88
-nodo_1550707360 [label="Then"]
-nodo_552040586 -- nodo_1550707360
-nodo_1154577792 [label=":="]
-nodo_1550707360 -- nodo_1154577792
-nodo_326146670 [label="ID: resultado"]
-nodo_1154577792 -- nodo_326146670
-nodo_2063776705 [label="+"]
-nodo_1154577792 -- nodo_2063776705
-nodo_1208575723 [label="ID: resultado"]
-nodo_2063776705 -- nodo_1208575723
-nodo_86 [label="CTE: 20"]
-nodo_2063776705 -- nodo_86
-nodo_121333535 [label="IF"]
-nodo_2097448492 -- nodo_121333535
-nodo_269430396 [label="AND"]
-nodo_121333535 -- nodo_269430396
-nodo_2126336783 [label=">"]
-nodo_269430396 -- nodo_2126336783
-nodo_89 [label="CTE: 50"]
-nodo_2126336783 -- nodo_89
-nodo_92 [label="CTE: 10"]
-nodo_2126336783 -- nodo_92
-nodo_2105560077 [label="<"]
-nodo_269430396 -- nodo_2105560077
-nodo_90 [label="CTE: 50"]
-nodo_2105560077 -- nodo_90
-nodo_93 [label="CTE: 50"]
-nodo_2105560077 -- nodo_93
-nodo_559927101 [label="Then"]
-nodo_121333535 -- nodo_559927101
-nodo_1221228964 [label=":="]
-nodo_559927101 -- nodo_1221228964
-nodo_1559981721 [label="ID: resultado"]
-nodo_1221228964 -- nodo_1559981721
-nodo_602190127 [label="+"]
-nodo_1221228964 -- nodo_602190127
-nodo_2082321481 [label="ID: resultado"]
-nodo_602190127 -- nodo_2082321481
-nodo_91 [label="CTE: 50"]
-nodo_602190127 -- nodo_91
-nodo_1736570167 [label="IF"]
-nodo_2097448492 -- nodo_1736570167
-nodo_1611256056 [label="AND"]
-nodo_1736570167 -- nodo_1611256056
-nodo_1717729311 [label=">"]
-nodo_1611256056 -- nodo_1717729311
-nodo_94 [label="CTE: 21"]
-nodo_1717729311 -- nodo_94
-nodo_97 [label="CTE: 10"]
-nodo_1717729311 -- nodo_97
-nodo_2009872230 [label="<"]
-nodo_1611256056 -- nodo_2009872230
-nodo_95 [label="CTE: 21"]
-nodo_2009872230 -- nodo_95
-nodo_98 [label="CTE: 50"]
-nodo_2009872230 -- nodo_98
-nodo_529292517 [label="Then"]
-nodo_1736570167 -- nodo_529292517
-nodo_825016828 [label=":="]
-nodo_529292517 -- nodo_825016828
-nodo_1157358918 [label="ID: resultado"]
-nodo_825016828 -- nodo_1157358918
-nodo_1385864632 [label="+"]
-nodo_825016828 -- nodo_1385864632
-nodo_797739130 [label="ID: resultado"]
-nodo_1385864632 -- nodo_797739130
-nodo_96 [label="CTE: 21"]
-nodo_1385864632 -- nodo_96
+nodo_1043404129 [label=":="]
+nodo_programa -- nodo_1043404129
+nodo_787089127 [label="a"]
+nodo_1043404129 -- nodo_787089127
+nodo_100 [label="CTE: 95"]
+nodo_1043404129 -- nodo_100
+nodo_1696236158 [label="WHILE"]
+nodo_programa -- nodo_1696236158
+nodo_74845696 [label="<"]
+nodo_1696236158 -- nodo_74845696
+nodo_853187058 [label="a"]
+nodo_74845696 -- nodo_853187058
+nodo_101 [label="CTE: 100"]
+nodo_74845696 -- nodo_101
+nodo_1291414640 [label="Cuerpo"]
+nodo_1696236158 -- nodo_1291414640
+nodo_2101419747 [label="IF"]
+nodo_1291414640 -- nodo_2101419747
+nodo_1232275781 [label="<"]
+nodo_2101419747 -- nodo_1232275781
+nodo_788532368 [label="a"]
+nodo_1232275781 -- nodo_788532368
+nodo_102 [label="CTE: 2"]
+nodo_1232275781 -- nodo_102
+nodo_673017836 [label="Then"]
+nodo_2101419747 -- nodo_673017836
+nodo_1566497290 [label="WRITE: 'SI'"]
+nodo_673017836 -- nodo_1566497290
+nodo_204921285 [label="Else"]
+nodo_2101419747 -- nodo_204921285
+nodo_603791455 [label="WRITE: 'NO'"]
+nodo_204921285 -- nodo_603791455
+nodo_1616660931 [label=":="]
+nodo_1291414640 -- nodo_1616660931
+nodo_1274630472 [label="a"]
+nodo_1616660931 -- nodo_1274630472
+nodo_1899708675 [label="+"]
+nodo_1616660931 -- nodo_1899708675
+nodo_990804131 [label="a"]
+nodo_1899708675 -- nodo_990804131
+nodo_103 [label="CTE: 1"]
+nodo_1899708675 -- nodo_103
 }

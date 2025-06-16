@@ -1,0 +1,7 @@
+DEFINE
+    <integer>:<resultado>
+ENDDEFINE
+
+PROGRAM
+resultado = middle(0; 100; [12,50,101])
+END

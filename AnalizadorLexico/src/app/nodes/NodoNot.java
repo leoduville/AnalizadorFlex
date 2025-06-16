@@ -19,6 +19,12 @@ public NodoNot (NodoExpresionBooleana izquierda) {
         return super.graficar(idPadre) +
                 izquierda.graficar(miId) ;
     }
+
+@Override
+public String generarSaltoSiFalso(String etiqueta) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'generarSaltoSiFalso'");
+}
     
 
 }

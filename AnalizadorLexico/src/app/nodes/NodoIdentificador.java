@@ -10,6 +10,11 @@ public class NodoIdentificador extends NodoExpresion {
 
     @Override
     public String getDescripcionNodo() {
-        return "ID: " + identificador;
+        return identificador;
+    }
+
+    @Override
+    public String generarAssembler() {
+        return "    FLD _" + identificador + "\n";
     }
 }

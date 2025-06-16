@@ -35,4 +35,9 @@ public class NodoConstante extends NodoExpresion {
         return sb.toString();
     }
 
+    @Override
+    public String generarAssembler() {
+        return "    FLD _" + valor + "\n";
+    }
+
 }

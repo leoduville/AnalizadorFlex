@@ -38,5 +38,13 @@ public class SymbolTableEntry {
 	public String getEntry() {
 		return String.format("%-25s | %-15s | %-10s | %-25s |%-5s", nombre, token, tipo, valor, longitud);
 	}
+
+	public String getValor() {
+		return this.valor;
+	}
+
+	public String getTipo() {
+		return this.tipo;
+	}
 	
 }

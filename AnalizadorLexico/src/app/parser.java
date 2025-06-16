@@ -8,6 +8,8 @@ package app;
 import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.FileWriter;
+import java.io.IOException;
 import app.nodes.*;
 import java_cup.runtime.XMLElement;
 
@@ -319,6 +321,78 @@ public class parser extends java_cup.runtime.lr_parser {
                 }
         }
 
+        private void generaDataSection(FileWriter writer) throws IOException {
+        writer.write(".DATA\n");
+        for (SymbolTableEntry entrada : ts) {
+                String token = entrada.getToken();
+                String nombre = entrada.getNombre();
+                String tipo = entrada.getTipo();
+                String valor = entrada.getValor();
+
+                if ("ID".equals(token)) {
+                if ("integer".equalsIgnoreCase(tipo)) {
+                        if (valor != null && !valor.equals("-")) {
+                        writer.write(nombre + " dd " + valor + "\n");
+                        } else {
+                        writer.write("_" + nombre + " dd ?\n");
+                        }
+                }
+                } else if ("CONST_DOU".equals(token)) {
+                if (valor != null && !valor.equals("-")) {
+                        writer.write(nombre + " dd " + valor + "\n");
+                }} else if ("CONST_INT".equals(token)) {
+                if (valor != null && !valor.equals("-")) {
+                        writer.write(nombre + " dd " + valor + ".00" + "\n");
+                }
+                } else if ("CONST_STR".equals(token)) {
+                if (valor != null && !valor.equals("-")) {
+                        writer.write(nombre + " db " + "' " + valor + "$',0" + "\n");        
+                }
+                }
+        }
+        writer.write("\n");
+        }
+
+
+
+        private void genera_assembler(NodoPrograma c) {
+        try {
+                FileWriter writer = new FileWriter("output.asm");
+
+                writer.write("; Código ensamblador generado\n\n");
+
+                // Encabezado
+                writer.write(".MODEL LARGE\n");
+                writer.write(".386\n");
+                writer.write(".STACK 200h\n\n");
+
+                // Sección de datos
+                generaDataSection(writer);
+
+                // Sección de código
+                writer.write(".CODE\n");
+                writer.write("START:\n");
+                writer.write("    MOV AX, @DATA\n");
+                writer.write("    MOV DS, AX\n\n");
+
+                if (c != null) {
+                writer.write(c.generarAssembler() + "\n");
+                } else {
+                writer.write("; No hay árbol sintáctico disponible.\n");
+                }
+
+                // Fin del programa
+                writer.write("\n    MOV AX, 4C00h\n");
+                writer.write("    INT 21h\n");
+                writer.write("END START\n");
+
+                writer.close();
+                System.out.println("Archivo 'output.asm' generado correctamente.");
+        } catch (IOException e) {
+                System.err.println("Error al generar el archivo ASM: " + e.getMessage());
+        }
+        }
+
 
         
 
@@ -370,9 +444,10 @@ class CUP$parser$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		NodoPrograma c = (NodoPrograma)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		 
+		
                 RESULT = c;
-                reglas.add("[Regla 0] codigo: El programa compila correctamente"); 
+                reglas.add("[Regla 0] codigo: El programa compila correctamente");
+                genera_assembler(c);
                 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("codigo",0, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }

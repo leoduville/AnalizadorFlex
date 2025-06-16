@@ -2,3 +2,5 @@
 /.metadata
 AnalizadorLexico/bin/
 java-cup-11b_1.jar
+out
+AnalizadorLexico/manifest.txt

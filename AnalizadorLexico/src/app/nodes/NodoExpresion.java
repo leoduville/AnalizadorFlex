@@ -7,6 +7,15 @@ public class NodoExpresion extends Nodo {
     }
 
     public String getValor() {
-        return null;
+        return this.getDescripcionNodo();
+    }
+
+    public String generarAssembler() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'generarAssembler'");
+    }
+
+    public boolean terminaConResultadoEnPila() {
+        return true; // comportamiento normal: sí deja algo en la pila
     }
 }

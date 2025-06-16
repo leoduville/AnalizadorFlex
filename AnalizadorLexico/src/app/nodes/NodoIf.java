@@ -50,4 +50,41 @@ public class NodoIf extends NodoSentencia {
 
         return resultado.toString();
     }
+
+    @Override
+    public String generarAssembler() {
+        StringBuilder sb = new StringBuilder();
+
+        String etiqFin = EtiquetaUtil.nuevaEtiqueta();
+        String etiqElse = sentenciasElse != null ? EtiquetaUtil.nuevaEtiqueta() : null;
+
+        sb.append(condicion.generarAssembler());
+
+        if (condicion instanceof NodoComparacion) {
+            if (etiqElse != null)
+                sb.append(condicion.generarSaltoSiFalso(etiqElse));
+            else {
+                sb.append(condicion.generarSaltoSiFalso(etiqFin));
+            }
+        }
+
+        // El NodoAnd ya genera los saltos internos
+        for (NodoSentencia sentencia : sentenciasThen) {
+            sb.append(sentencia.generarAssembler());
+        }
+        
+        if (sentenciasElse != null) {
+            sb.append("    JMP ").append(etiqFin).append("\n");
+            sb.append(etiqElse).append(":\n");
+
+            for (NodoSentencia sentencia : sentenciasElse) {
+                sb.append(sentencia.generarAssembler());
+            }
+        }
+
+        sb.append(etiqFin).append(":\n");
+
+        return sb.toString();
+    }
+
 }

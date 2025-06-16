@@ -46,6 +46,15 @@
 
             return resultado.toString();
         }
+
+        public String generarAssembler() {
+            StringBuilder sb = new StringBuilder();
+            for (NodoSentencia sentencia : sentencias) {
+                sb.append(sentencia.generarAssembler());
+            }
+            return sb.toString();
+        }
+
     }
         
 

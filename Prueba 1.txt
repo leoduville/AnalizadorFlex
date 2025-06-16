@@ -1,0 +1,11 @@
+DEFINE
+    <integer>:<resultado>
+    <integer>:<resultadoo>
+    <integer>:<resultadooo>
+ENDDEFINE
+
+PROGRAM
+resultado = 5,
+resultadoo = 10,
+resultadooo = resultado + resultadoo
+END

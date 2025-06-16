@@ -1,0 +1,16 @@
+DEFINE
+    <integer>:<a>
+ENDDEFINE
+
+PROGRAM
+a = 55,
+while((a) < (100)){
+   /* Escribe si var_entera es par */
+   if((a) < (2)) {
+       WRITE 'SI'
+   } else {
+       WRITE 'NO'
+   },
+   a = a + 1
+}
+END

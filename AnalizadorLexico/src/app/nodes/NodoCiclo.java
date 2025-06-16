@@ -6,6 +6,7 @@ public class NodoCiclo extends NodoSentencia {
     private final NodoExpresionBooleana condicion;
     private final List<NodoSentencia> cuerpo;
   
+    static int contadorEtiquetas = 0;
 
     public NodoCiclo(NodoExpresionBooleana condicion, List<NodoSentencia> cuerpo) {
         super("WHILE");
@@ -50,6 +51,29 @@ public class NodoCiclo extends NodoSentencia {
 */
         return resultado.toString();
     }
+
+    @Override
+    public String generarAssembler() {
+        StringBuilder sb = new StringBuilder();
+
+        String etiqInicio = EtiquetaUtil.nuevaEtiqueta();
+        String etiqFin = EtiquetaUtil.nuevaEtiqueta();
+
+        sb.append(etiqInicio).append(":\n");
+        sb.append(condicion.generarAssembler()); // Esto debe generar el FXCH, FCOM, etc.
+        //sb.append("    JNA ").append(etiqFin).append("\n");
+        sb.append(condicion.generarSaltoSiFalso(etiqFin));
+
+        for (NodoSentencia sentencia : cuerpo) {
+            sb.append(sentencia.generarAssembler());
+        }
+
+        sb.append("    JMP ").append(etiqInicio).append("\n");
+        sb.append(etiqFin).append(":\n");
+
+        return sb.toString();
+    }
+    
 }
 
 

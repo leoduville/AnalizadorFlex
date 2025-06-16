@@ -17,4 +17,17 @@ public class NodoAsignacion extends NodoSentencia {
                 identificador.graficar(miId) +
                 expresion.graficar(miId);
     }
+
+    @Override
+    public String generarAssembler() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(expresion.generarAssembler());
+        
+        // Solo hace FSTP si queda el resultado en la pila
+        if (expresion.terminaConResultadoEnPila()) {
+            sb.append("    FSTP _").append(identificador.getDescripcionNodo()).append("\n");
+        }
+
+        return sb.toString();
+    }
 }
